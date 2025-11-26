@@ -17,7 +17,7 @@ const run = async () => {
     const hashed = await bcrypt.hash('Admin@123', salt);
 
     const admin = new User({
-      name: 'Super Admin',
+      name: ' Admin',
       email: adminEmail,
       password: hashed,
       role: 'Admin',

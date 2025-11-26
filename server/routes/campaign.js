@@ -759,18 +759,39 @@ router.patch("/:id", authMiddleware, async (req, res) => {
       if (req.body.endDate) delete req.body.endDate;
     }
 
+    // updatable.forEach((key) => {
+    //   if (typeof req.body[key] !== "undefined") {
+    //     // parse numbers for numeric fields to avoid string persistence
+    //     if (["transactions", "expectedBilling", "expectedSpend", "expectedMargin", "finalSpend", "margin", "marginPercentage", "invoiceAmount"].includes(key)) {
+    //       c[key] = req.body[key] !== "" ? Number(req.body[key]) : 0;
+    //     } else if (key.endsWith("Date") || key === "startDate" || key === "endDate" || key === "overdueDate" || key === "invoiceDate") {
+    //       c[key] = req.body[key] ? new Date(req.body[key]) : undefined;
+    //     } else {
+    //       c[key] = req.body[key];
+    //     }
+    //   }
+    // });
+
+
     updatable.forEach((key) => {
-      if (typeof req.body[key] !== "undefined") {
-        // parse numbers for numeric fields to avoid string persistence
-        if (["transactions", "expectedBilling", "expectedSpend", "expectedMargin", "finalSpend", "margin", "marginPercentage", "invoiceAmount"].includes(key)) {
-          c[key] = req.body[key] !== "" ? Number(req.body[key]) : 0;
-        } else if (key.endsWith("Date") || key === "startDate" || key === "endDate" || key === "overdueDate" || key === "invoiceDate") {
-          c[key] = req.body[key] ? new Date(req.body[key]) : undefined;
-        } else {
-          c[key] = req.body[key];
-        }
+  if (typeof req.body[key] !== "undefined") {
+
+    if (["transactions", "expectedBilling", "expectedSpend", "expectedMargin", "finalSpend", "margin", "marginPercentage", "invoiceAmount"].includes(key)) {
+      let val = req.body[key];
+      if (val === undefined || val === null || val === "" || isNaN(Number(val))) {
+        c[key] = 0;
+      } else {
+        c[key] = Number(val);
       }
-    });
+    } else if (key.endsWith("Date") || key === "startDate" || key === "endDate" || key === "overdueDate" || key === "invoiceDate") {
+      c[key] = req.body[key] ? new Date(req.body[key]) : undefined;
+    } else {
+      c[key] = req.body[key];
+    }
+  }
+});
+
+
 
     await c.save();
 
