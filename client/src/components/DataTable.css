@@ -1,0 +1,59 @@
+.datatable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.datatable th, .datatable td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.datatable th {
+  background: #f4f4f4;
+}
+
+
+
+
+
+
+.datatable-container {
+  padding: 20px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+  overflow-x: auto;
+}
+
+.datatable-premium {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 700px;
+}
+
+.datatable-premium thead {
+  background: linear-gradient(135deg, #4c6ef5, #6574f7);
+  color: #fff;
+}
+
+.datatable-premium th {
+  padding: 14px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.datatable-premium tbody tr {
+  transition: all 0.2s ease;
+}
+
+.datatable-premium td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.datatable-premium tbody tr:hover {
+  background: #f5f7ff;
+  transform: scale(1.01);
+}

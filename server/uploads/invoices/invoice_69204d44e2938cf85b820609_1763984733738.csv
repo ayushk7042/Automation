@@ -1,0 +1,5 @@
+"advertiserName","campaignName","amAssigned","startDate","endDate","validationStatus","invoiceStatus","invoiceAmount","invoiceDate","paymentStatus","overdueDate"
+"HealthPlus","ABC Campaign","bhawana@example.com","2025-11-20","","Received","NotRaised",0,"","NotReceived","2025-11-21"
+"HealthPlus","ABC Campaign","bhawana@example.com","2025-11-20","","Pending","NotRaised",0,"","Received","2025-11-21"
+"market","zomatox","bhawana@affalliances.com","2025-11-23","2025-11-25","Pending","NotRaised",49998,"2025-11-23","NotReceived","2025-11-26"
+"healthactive ","just a to z","ayush@affalliances.com","2025-11-24","2025-11-27","Received","Raised",0,"","NotReceived","2025-11-28"

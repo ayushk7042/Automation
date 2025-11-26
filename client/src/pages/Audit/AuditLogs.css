@@ -1,0 +1,42 @@
+.audit-page {
+  padding: 20px;
+}
+
+.search-box {
+  width: 300px;
+  padding: 8px;
+  margin-bottom: 20px;
+}
+
+.audit-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+.audit-table th,
+.audit-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  vertical-align: top;
+  font-size: 14px;
+}
+
+.audit-table th {
+  background: #f3f3f3;
+  font-weight: bold;
+}
+
+.audit-table pre {
+  background: #f7f7f7;
+  padding: 6px;
+  border-radius: 4px;
+  max-width: 300px;
+  overflow-x: auto;
+  font-size: 12px;
+}
+
+.action {
+  font-weight: bold;
+  color: #007bff;
+}

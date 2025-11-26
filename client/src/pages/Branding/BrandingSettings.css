@@ -1,0 +1,121 @@
+/* --- Container --- */
+.branding-container {
+  max-width: 650px;
+  margin: 30px auto;
+  padding: 20px;
+  font-family: "Inter", sans-serif;
+}
+
+.branding-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 25px;
+  color: #1e1e2f;
+}
+
+/* --- Card --- */
+.branding-card {
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+  margin-bottom: 25px;
+  border: 1px solid #f0f0f4;
+}
+
+/* --- Form Group --- */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #444;
+}
+
+.form-group input[type="text"] {
+  padding: 12px 14px;
+  font-size: 15px;
+  border-radius: 10px;
+  border: 1px solid #d4d4e2;
+  transition: 0.2s ease;
+}
+
+.form-group input[type="text"]:focus {
+  border-color: #5c6bff;
+  box-shadow: 0 0 0 3px rgba(92,107,255,0.18);
+}
+
+/* --- Color Picker --- */
+.color-picker {
+  width: 60px;
+  height: 38px;
+  border: none;
+  cursor: pointer;
+}
+
+/* --- Buttons --- */
+.btn-primary {
+  background: #4b57ff;
+  color: #fff;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  transition: 0.2s ease;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.btn-primary:hover {
+  background: #3f4be5;
+  transform: scale(1.03);
+}
+
+.btn-secondary {
+  background: #f0f2ff;
+  color: #3c48ff;
+  border: 1px solid #d7dbff;
+  padding: 12px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  transition: 0.2s ease;
+  width: 100%;
+}
+
+.btn-secondary:hover {
+  background: #e5e7ff;
+  transform: scale(1.03);
+}
+
+/* --- Divider --- */
+.divider {
+  height: 1px;
+  background: #e5e5ef;
+  margin: 25px 0;
+}
+
+/* --- Logo Preview --- */
+.logo-preview-section p {
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #444;
+}
+
+.logo-preview {
+  height: 90px;
+  margin-bottom: 20px;
+  object-fit: contain;
+  border-radius: 10px;
+  border: 1px solid #e5e5ef;
+  padding: 10px;
+  background: #fafaff;
+}

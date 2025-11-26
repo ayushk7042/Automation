@@ -1,0 +1,114 @@
+.notif-bell{ position:relative; cursor:pointer; }
+.bell-icon{ font-size:18px; }
+.notif-count{
+  position:absolute; top:-6px; right:-6px;
+  background:#ff3b30; color:#fff; font-size:12px; padding:2px 6px; border-radius:12px;
+}
+.notif-dropdown{
+  position:absolute; right:0; top:28px; width:320px; max-height:420px; overflow:auto;
+  background:#fff; border:1px solid #ddd; box-shadow:0 8px 20px rgba(0,0,0,0.08); display:none;
+  z-index:50;
+}
+.notif-bell:hover .notif-dropdown{ display:block; }
+.notif-item{ padding:8px; border-bottom:1px solid #f1f1f1; }
+.notif-item.unread{ background:#f9fbff; }
+.notif-title{ font-weight:600; }
+.notif-body{ font-size:13px; color:#555; margin-top:4px; }
+.notif-actions button{ background:#007bff; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; }
+.notif-empty{ padding:12px; text-align:center; color:#666; }
+
+
+
+
+
+
+.notif-wrapper {
+  position: relative;
+}
+
+.notif-bell {
+  font-size: 26px;
+  cursor: pointer;
+  position: relative;
+  transition: 0.2s ease;
+}
+
+.notif-bell:hover {
+  transform: scale(1.1);
+}
+
+.notif-badge {
+  background: red;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 50%;
+  font-size: 11px;
+  position: absolute;
+  top: -6px;
+  right: -6px;
+}
+
+.notif-dropdown {
+  position: absolute;
+  top: 35px;
+  right: 0;
+  width: 300px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  padding: 10px;
+  display: none;
+  z-index: 10;
+}
+
+.notif-wrapper:hover .notif-dropdown {
+  display: block;
+}
+
+.notif-item {
+  padding: 10px 12px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  background: #f0f2ff;
+  transition: 0.2s ease;
+}
+
+.notif-item.unread {
+  background: #dfe3ff;
+  border-left: 4px solid #4a5eff;
+}
+
+.notif-item:hover {
+  transform: scale(1.01);
+  background: #e7e9ff;
+}
+
+.notif-title {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.notif-body {
+  font-size: 13px;
+  color: #555;
+}
+
+.notif-btn {
+  margin-top: 6px;
+  background: #4c6ef5;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.notif-btn:hover {
+  background: #3a58d9;
+}
+
+.notif-footer {
+  text-align: center;
+  margin-top: 6px;
+}
