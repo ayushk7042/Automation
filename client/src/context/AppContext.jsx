@@ -2,6 +2,9 @@ import React, { createContext, useState, useEffect, useContext } from "react";
 import * as brandingAPI from "../api/branding";
 import * as notificationAPI from "../api/notification";
 import { AuthContext } from "./AuthContext";
+import { io } from "socket.io-client";
+
+
 
 export const AppContext = createContext();
 
@@ -49,6 +52,29 @@ export const AppProvider = ({ children }) => {
       clearInterval(iv);
     };
   }, [user]);
+
+
+// ⏳ REAL-TIME NOTIFICATION SOCKET LISTENER
+useEffect(() => {
+  if (!user) return;
+
+  const socket = io("http://localhost:5000", {
+    transports: ["websocket"],
+  });
+
+  socket.emit("join", user._id);
+
+  socket.on("notification.new", (payload) => {
+    console.log("🔔 Real-Time Notification:", payload);
+    setNotifications((prev) => [payload, ...prev]);
+    setUnreadCount((c) => c + 1);
+  });
+
+  return () => socket.disconnect();
+}, [user]);
+
+
+
 
   const markReadLocal = (id) => {
     setNotifications((prev) => prev.map((n) => (n._id === id ? { ...n, read: true } : n)));

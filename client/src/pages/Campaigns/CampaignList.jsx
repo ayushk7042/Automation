@@ -127,13 +127,17 @@
 
 
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState , useContext} from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { getCampaigns, deleteCampaign, exportCampaignsCSV } from "../../api/campaign";
+import { getCampaigns, deleteCampaign, exportCampaignsCSV , importCampaigns} from "../../api/campaign";
 import { listUsers } from "../../api/admin";
 import "./Campaigns.css";
+import { AuthContext } from "../../context/AuthContext";   // ⭐ 
+
 
 const CampaignList = () => {
+
+   const { user } = useContext(AuthContext);     // ⭐
   const [campaigns, setCampaigns] = useState([]);
   const [ams, setAms] = useState([]);
 
@@ -150,6 +154,9 @@ const CampaignList = () => {
 
   // Load AM dropdown
   useEffect(() => {
+
+ if (user?.role !== "Admin") return;   // ⭐
+
     (async () => {
       try {
         const res = await listUsers({ role: "AM" });
@@ -192,6 +199,33 @@ const CampaignList = () => {
     }
   };
 
+
+
+//new import 
+const handleImport = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const res = await importCampaigns(formData);
+    //alert(`Imported successfully: ${res.data.count} campaigns`);
+
+alert(`Upload Completed. Created: ${res.data.summary?.created || 0} | Updated: ${res.data.summary?.updated || 0}`);
+
+
+    load();   // refresh list
+  } catch (error) {
+    console.error(error);
+    alert("Import failed");
+  }
+};
+
+
+
+
   const handleExport = async () => {
     try {
       const res = await exportCampaignsCSV();
@@ -232,10 +266,30 @@ const CampaignList = () => {
     <div className="campaigns-page">
       <div className="page-header">
         <h2>Campaigns</h2>
-        <div className="page-actions">
+        {/* <div className="page-actions">
           <Link to="/campaigns/create" className="btn-primary">+ New Campaign</Link>
           <button className="btn" onClick={handleExport}>Export CSV</button>
-        </div>
+        </div> */}
+
+
+<div className="page-actions">
+  <Link to="/campaigns/create" className="btn-primary">+ New Campaign</Link>
+  
+  {user?.role === "Admin" && (
+  <label className="btn">
+    Import CSV
+    <input type="file" accept=".csv,.xlsx" style={{ display: "none" }} onChange={handleImport}/>
+  </label>
+)}
+
+
+
+  <button className="btn" onClick={handleExport}>Export CSV</button>
+</div>
+
+
+
+
       </div>
 
       {/* ---------------- FILTERS ---------------- */}

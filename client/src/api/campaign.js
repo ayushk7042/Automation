@@ -7,6 +7,6 @@ export const updateCampaign = (id, payload) => API.patch(`/campaigns/${id}`, pay
 export const getCampaigns = (params) => API.get("/campaigns", { params });
 export const getCampaign = (id) => API.get(`/campaigns/${id}`);
 export const importCampaigns = (formData) =>
-  API.post("/campaigns/import", formData, { headers: { "Content-Type": "multipart/form-data" }});
+  API.post("/campaigns/upload", formData, { headers: { "Content-Type": "multipart/form-data" }});
 export const exportCampaignsCSV = () => API.get("/campaigns/export/csv", { responseType: "blob" });
 export const deleteCampaign = (id) => API.delete(`/campaigns/${id}`);
