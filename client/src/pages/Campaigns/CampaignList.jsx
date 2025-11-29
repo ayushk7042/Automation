@@ -1,24 +1,58 @@
-// import React, { useEffect, useState } from "react";
+
+// import React, { useEffect, useState , useContext} from "react";
 // import { Link, useNavigate } from "react-router-dom";
-// import { getCampaigns, deleteCampaign, exportCampaignsCSV } from "../../api/campaign";
+// import { getCampaigns, deleteCampaign, exportCampaignsCSV , importCampaigns} from "../../api/campaign";
+// import { listUsers } from "../../api/admin";
 // import "./Campaigns.css";
+// import { AuthContext } from "../../context/AuthContext";   // ⭐ 
+
 
 // const CampaignList = () => {
+
+//    const { user } = useContext(AuthContext);     // ⭐
 //   const [campaigns, setCampaigns] = useState([]);
-//   const [filters, setFilters] = useState({ advertiser: "", amId: "", month: "", status: "" });
+//   const [ams, setAms] = useState([]);
+
+//   const [filters, setFilters] = useState({
+//     advertiser: "",
+//     amId: "",
+//     month: "",
+//     status: "",
+//     platform: "",
+//     directType: ""
+//   });
+
 //   const navigate = useNavigate();
+
+//   // Load AM dropdown
+//   useEffect(() => {
+
+//  if (user?.role !== "Admin") return;   // ⭐
+
+//     (async () => {
+//       try {
+//         const res = await listUsers({ role: "AM" });
+//         setAms(res.data);
+//       } catch (e) {
+//         console.error(e);
+//       }
+//     })();
+//   }, []);
 
 //   const load = async () => {
 //     try {
 //       const res = await getCampaigns(filters);
-//       setCampaigns(res.data);
+//       // Latest first
+//       setCampaigns(res.data.reverse());
 //     } catch (e) {
 //       console.error(e);
 //       alert("Failed to load campaigns");
 //     }
 //   };
 
-//   useEffect(() => { load(); }, []);
+//   useEffect(() => {
+//     load();
+//   }, []);
 
 //   const applyFilters = async (e) => {
 //     e?.preventDefault();
@@ -37,6 +71,33 @@
 //     }
 //   };
 
+
+
+// //new import 
+// const handleImport = async (e) => {
+//   const file = e.target.files[0];
+//   if (!file) return;
+
+//   const formData = new FormData();
+//   formData.append("file", file);
+
+//   try {
+//     const res = await importCampaigns(formData);
+//     //alert(`Imported successfully: ${res.data.count} campaigns`);
+
+// alert(`Upload Completed. Created: ${res.data.summary?.created || 0} | Updated: ${res.data.summary?.updated || 0}`);
+
+
+//     load();   // refresh list
+//   } catch (error) {
+//     console.error(error);
+//     alert("Import failed");
+//   }
+// };
+
+
+
+
 //   const handleExport = async () => {
 //     try {
 //       const res = await exportCampaignsCSV();
@@ -53,27 +114,114 @@
 //     }
 //   };
 
+//   // Tag colors
+//   const tagClass = (value) => {
+//     const v = value?.toLowerCase();
+
+//     if (v === "pending") return "tag yellow";
+//     if (v === "received") return "tag green";
+//     if (v === "notraised") return "tag orange";
+//     if (v === "raised") return "tag blue";
+//     if (v === "notreceived") return "tag red";
+
+//     return "tag";
+//   };
+
+//   const overdueStyle = (date) => {
+//     if (!date) return {};
+//     const d = new Date(date);
+//     if (d < new Date()) return { color: "red", fontWeight: "bold" };
+//     return {};
+//   };
+
 //   return (
 //     <div className="campaigns-page">
 //       <div className="page-header">
 //         <h2>Campaigns</h2>
-//         <div className="page-actions">
+//         {/* <div className="page-actions">
 //           <Link to="/campaigns/create" className="btn-primary">+ New Campaign</Link>
 //           <button className="btn" onClick={handleExport}>Export CSV</button>
-//         </div>
+//         </div> */}
+
+
+// <div className="page-actions">
+//   <Link to="/campaigns/create" className="btn-primary">+ New Campaign</Link>
+  
+//   {user?.role === "Admin" && (
+//   <label className="btn">
+//     Import CSV
+//     <input type="file" accept=".csv,.xlsx" style={{ display: "none" }} onChange={handleImport}/>
+//   </label>
+// )}
+
+
+
+//   <button className="btn" onClick={handleExport}>Export CSV</button>
+// </div>
+
+
+
+
 //       </div>
 
+//       {/* ---------------- FILTERS ---------------- */}
 //       <form className="filters" onSubmit={applyFilters}>
-//         <input placeholder="Advertiser" value={filters.advertiser} onChange={e => setFilters({...filters, advertiser: e.target.value})} />
-//         <input placeholder="AM Id" value={filters.amId} onChange={e => setFilters({...filters, amId: e.target.value})} />
-//         <select value={filters.month} onChange={e => setFilters({...filters, month: e.target.value})}>
-//           <option value="">All months</option>
-//           <option value="1">Jan</option><option value="2">Feb</option><option value="3">Mar</option>
-//           <option value="4">Apr</option><option value="5">May</option><option value="6">Jun</option>
-//           <option value="7">Jul</option><option value="8">Aug</option><option value="9">Sep</option>
-//           <option value="10">Oct</option><option value="11">Nov</option><option value="12">Dec</option>
+//         <input
+//           placeholder="Advertiser"
+//           value={filters.advertiser}
+//           onChange={(e) => setFilters({ ...filters, advertiser: e.target.value })}
+//         />
+
+//         {/* Select AM */}
+//         <select
+//           value={filters.amId}
+//           onChange={(e) => setFilters({ ...filters, amId: e.target.value })}
+//         >
+//           <option value="">All AMs</option>
+//           {ams.map((a) => (
+//             <option key={a._id} value={a._id}>
+//               {a.name}
+//             </option>
+//           ))}
 //         </select>
-//         <select value={filters.status} onChange={e => setFilters({...filters, status: e.target.value})}>
+
+//         {/* Platform */}
+//         <select
+//           value={filters.platform}
+//           onChange={(e) => setFilters({ ...filters, platform: e.target.value })}
+//         >
+//           <option value="">Platform</option>
+//           <option value="Web">Web</option>
+//           <option value="Mobile">Mobile</option>
+//           <option value="Other">Other</option>
+//         </select>
+
+//         {/* Direct / Indirect */}
+//         <select
+//           value={filters.directType}
+//           onChange={(e) => setFilters({ ...filters, directType: e.target.value })}
+//         >
+//           <option value="">Direct / Indirect</option>
+//           <option value="Direct">Direct</option>
+//           <option value="Indirect">Indirect</option>
+//         </select>
+
+//         {/* Month */}
+//         <select
+//           value={filters.month}
+//           onChange={(e) => setFilters({ ...filters, month: e.target.value })}
+//         >
+//           <option value="">All months</option>
+//           {[1,2,3,4,5,6,7,8,9,10,11,12].map(m => (
+//             <option key={m} value={m}>{m}</option>
+//           ))}
+//         </select>
+
+//         {/* Status */}
+//         <select
+//           value={filters.status}
+//           onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+//         >
 //           <option value="">All statuses</option>
 //           <option value="Pending">Validation Pending</option>
 //           <option value="Received">Validation Received</option>
@@ -83,15 +231,20 @@
 //           <option value="NotReceived">Payment Pending</option>
 //           <option value="Received">Payment Received</option>
 //         </select>
+
 //         <button className="btn" type="submit">Apply</button>
 //       </form>
 
+//       {/* ---------------- TABLE ---------------- */}
 //       <table className="table">
 //         <thead>
 //           <tr>
 //             <th>Advertiser</th>
 //             <th>Campaign</th>
 //             <th>AM</th>
+//             <th>Platform</th>
+//             <th>Direct</th>
+//             <th>Status</th>
 //             <th>Validation</th>
 //             <th>Invoice</th>
 //             <th>Payment</th>
@@ -99,16 +252,50 @@
 //             <th>Actions</th>
 //           </tr>
 //         </thead>
+
 //         <tbody>
-//           {campaigns.map(c => (
+//           {campaigns.map((c) => (
 //             <tr key={c._id}>
 //               <td>{c.advertiserName}</td>
-//               <td><Link to={`/campaigns/${c._id}`}>{c.campaignName}</Link></td>
-//               <td>{c.amAssigned ? c.amAssigned.name : "-"}</td>
-//               <td><span className={`tag ${c.validationStatus.toLowerCase()}`}>{c.validationStatus}</span></td>
-//               <td><span className={`tag ${c.invoiceStatus.toLowerCase()}`}>{c.invoiceStatus}</span></td>
-//               <td><span className={`tag ${c.paymentStatus.toLowerCase()}`}>{c.paymentStatus}</span></td>
-//               <td>{c.overdueDate ? new Date(c.overdueDate).toLocaleDateString() : "-"}</td>
+
+//               <td>
+//                 <Link to={`/campaigns/${c._id}`} className="link">
+//                   {c.campaignName}
+//                 </Link>
+//               </td>
+
+//               <td>{c.amAssigned?.name || "-"}</td>
+
+//               <td>{c.platform}</td>
+
+//               <td>{c.directType}</td>
+
+//               <td>
+//                 <span className="tag dark">{c.status}</span>
+//               </td>
+
+//               <td>
+//                 <span className={tagClass(c.validationStatus)}>
+//                   {c.validationStatus}
+//                 </span>
+//               </td>
+
+//               <td>
+//                 <span className={tagClass(c.invoiceStatus)}>
+//                   {c.invoiceStatus}
+//                 </span>
+//               </td>
+
+//               <td>
+//                 <span className={tagClass(c.paymentStatus)}>
+//                   {c.paymentStatus}
+//                 </span>
+//               </td>
+
+//               <td style={overdueStyle(c.overdueDate)}>
+//                 {c.overdueDate ? new Date(c.overdueDate).toLocaleDateString() : "-"}
+//               </td>
+
 //               <td>
 //                 <button className="btn" onClick={() => navigate(`/campaigns/${c._id}`)}>View</button>
 //                 <button className="btn" onClick={() => navigate(`/campaigns/${c._id}/edit`)}>Edit</button>
@@ -125,19 +312,16 @@
 // export default CampaignList;
 
 
-
-
 import React, { useEffect, useState , useContext} from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getCampaigns, deleteCampaign, exportCampaignsCSV , importCampaigns} from "../../api/campaign";
 import { listUsers } from "../../api/admin";
 import "./Campaigns.css";
-import { AuthContext } from "../../context/AuthContext";   // ⭐ 
+import { AuthContext } from "../../context/AuthContext";
 
 
 const CampaignList = () => {
-
-   const { user } = useContext(AuthContext);     // ⭐
+  const { user } = useContext(AuthContext);
   const [campaigns, setCampaigns] = useState([]);
   const [ams, setAms] = useState([]);
 
@@ -154,8 +338,7 @@ const CampaignList = () => {
 
   // Load AM dropdown
   useEffect(() => {
-
- if (user?.role !== "Admin") return;   // ⭐
+    if (user?.role !== "Admin") return;
 
     (async () => {
       try {
@@ -167,10 +350,36 @@ const CampaignList = () => {
     })();
   }, []);
 
+  // Load campaigns
   const load = async () => {
     try {
-      const res = await getCampaigns(filters);
-      // Latest first
+      let payload = { ...filters };
+
+      // If month filter selected, send start/end of that month
+      // if (filters.month) {
+      //   const month = parseInt(filters.month, 10);
+      //   const year = new Date().getFullYear(); // current year
+      //   const startOfMonth = new Date(year, month - 1, 1); // first day
+      //   const endOfMonth = new Date(year, month, 0, 23, 59, 59, 999); // last day
+
+      //   payload.startDate = startOfMonth.toISOString();
+      //   payload.endDate = endOfMonth.toISOString();
+      // }
+
+if (filters.month) {
+  const month = parseInt(filters.month, 10);
+  const year = new Date().getFullYear();
+  const startOfMonth = new Date(year, month - 1, 1);
+  const endOfMonth = new Date(year, month, 0, 23, 59, 59, 999);
+
+  // send to backend
+  payload.filterMonthStart = startOfMonth.toISOString();
+  payload.filterMonthEnd = endOfMonth.toISOString();
+}
+
+
+
+      const res = await getCampaigns(payload);
       setCampaigns(res.data.reverse());
     } catch (e) {
       console.error(e);
@@ -178,9 +387,7 @@ const CampaignList = () => {
     }
   };
 
-  useEffect(() => {
-    load();
-  }, []);
+  useEffect(() => { load(); }, []);
 
   const applyFilters = async (e) => {
     e?.preventDefault();
@@ -199,32 +406,22 @@ const CampaignList = () => {
     }
   };
 
+  const handleImport = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
+    const formData = new FormData();
+    formData.append("file", file);
 
-//new import 
-const handleImport = async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-
-  const formData = new FormData();
-  formData.append("file", file);
-
-  try {
-    const res = await importCampaigns(formData);
-    //alert(`Imported successfully: ${res.data.count} campaigns`);
-
-alert(`Upload Completed. Created: ${res.data.summary?.created || 0} | Updated: ${res.data.summary?.updated || 0}`);
-
-
-    load();   // refresh list
-  } catch (error) {
-    console.error(error);
-    alert("Import failed");
-  }
-};
-
-
-
+    try {
+      const res = await importCampaigns(formData);
+      alert(`Upload Completed. Created: ${res.data.summary?.created || 0} | Updated: ${res.data.summary?.updated || 0}`);
+      load();
+    } catch (error) {
+      console.error(error);
+      alert("Import failed");
+    }
+  };
 
   const handleExport = async () => {
     try {
@@ -242,16 +439,13 @@ alert(`Upload Completed. Created: ${res.data.summary?.created || 0} | Updated: $
     }
   };
 
-  // Tag colors
   const tagClass = (value) => {
     const v = value?.toLowerCase();
-
     if (v === "pending") return "tag yellow";
     if (v === "received") return "tag green";
     if (v === "notraised") return "tag orange";
     if (v === "raised") return "tag blue";
     if (v === "notreceived") return "tag red";
-
     return "tag";
   };
 
@@ -266,90 +460,45 @@ alert(`Upload Completed. Created: ${res.data.summary?.created || 0} | Updated: $
     <div className="campaigns-page">
       <div className="page-header">
         <h2>Campaigns</h2>
-        {/* <div className="page-actions">
+        <div className="page-actions">
           <Link to="/campaigns/create" className="btn-primary">+ New Campaign</Link>
+          {user?.role === "Admin" && (
+            <label className="btn">
+              Import CSV
+              <input type="file" accept=".csv,.xlsx" style={{ display: "none" }} onChange={handleImport}/>
+            </label>
+          )}
           <button className="btn" onClick={handleExport}>Export CSV</button>
-        </div> */}
-
-
-<div className="page-actions">
-  <Link to="/campaigns/create" className="btn-primary">+ New Campaign</Link>
-  
-  {user?.role === "Admin" && (
-  <label className="btn">
-    Import CSV
-    <input type="file" accept=".csv,.xlsx" style={{ display: "none" }} onChange={handleImport}/>
-  </label>
-)}
-
-
-
-  <button className="btn" onClick={handleExport}>Export CSV</button>
-</div>
-
-
-
-
+        </div>
       </div>
 
-      {/* ---------------- FILTERS ---------------- */}
       <form className="filters" onSubmit={applyFilters}>
-        <input
-          placeholder="Advertiser"
-          value={filters.advertiser}
-          onChange={(e) => setFilters({ ...filters, advertiser: e.target.value })}
-        />
+        <input placeholder="Advertiser" value={filters.advertiser} onChange={e => setFilters({...filters, advertiser: e.target.value})} />
 
-        {/* Select AM */}
-        <select
-          value={filters.amId}
-          onChange={(e) => setFilters({ ...filters, amId: e.target.value })}
-        >
+        <select value={filters.amId} onChange={e => setFilters({...filters, amId: e.target.value})}>
           <option value="">All AMs</option>
-          {ams.map((a) => (
-            <option key={a._id} value={a._id}>
-              {a.name}
-            </option>
-          ))}
+          {ams.map(a => <option key={a._id} value={a._id}>{a.name}</option>)}
         </select>
 
-        {/* Platform */}
-        <select
-          value={filters.platform}
-          onChange={(e) => setFilters({ ...filters, platform: e.target.value })}
-        >
+        <select value={filters.platform} onChange={e => setFilters({...filters, platform: e.target.value})}>
           <option value="">Platform</option>
           <option value="Web">Web</option>
           <option value="Mobile">Mobile</option>
           <option value="Other">Other</option>
         </select>
 
-        {/* Direct / Indirect */}
-        <select
-          value={filters.directType}
-          onChange={(e) => setFilters({ ...filters, directType: e.target.value })}
-        >
+        <select value={filters.directType} onChange={e => setFilters({...filters, directType: e.target.value})}>
           <option value="">Direct / Indirect</option>
           <option value="Direct">Direct</option>
           <option value="Indirect">Indirect</option>
         </select>
 
-        {/* Month */}
-        <select
-          value={filters.month}
-          onChange={(e) => setFilters({ ...filters, month: e.target.value })}
-        >
+        <select value={filters.month} onChange={e => setFilters({...filters, month: e.target.value})}>
           <option value="">All months</option>
-          {[1,2,3,4,5,6,7,8,9,10,11,12].map(m => (
-            <option key={m} value={m}>{m}</option>
-          ))}
+          {[1,2,3,4,5,6,7,8,9,10,11,12].map(m => <option key={m} value={m}>{m}</option>)}
         </select>
 
-        {/* Status */}
-        <select
-          value={filters.status}
-          onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-        >
+        <select value={filters.status} onChange={e => setFilters({...filters, status: e.target.value})}>
           <option value="">All statuses</option>
           <option value="Pending">Validation Pending</option>
           <option value="Received">Validation Received</option>
@@ -363,7 +512,6 @@ alert(`Upload Completed. Created: ${res.data.summary?.created || 0} | Updated: $
         <button className="btn" type="submit">Apply</button>
       </form>
 
-      {/* ---------------- TABLE ---------------- */}
       <table className="table">
         <thead>
           <tr>
@@ -382,48 +530,18 @@ alert(`Upload Completed. Created: ${res.data.summary?.created || 0} | Updated: $
         </thead>
 
         <tbody>
-          {campaigns.map((c) => (
+          {campaigns.map(c => (
             <tr key={c._id}>
               <td>{c.advertiserName}</td>
-
-              <td>
-                <Link to={`/campaigns/${c._id}`} className="link">
-                  {c.campaignName}
-                </Link>
-              </td>
-
+              <td><Link to={`/campaigns/${c._id}`} className="link">{c.campaignName}</Link></td>
               <td>{c.amAssigned?.name || "-"}</td>
-
               <td>{c.platform}</td>
-
               <td>{c.directType}</td>
-
-              <td>
-                <span className="tag dark">{c.status}</span>
-              </td>
-
-              <td>
-                <span className={tagClass(c.validationStatus)}>
-                  {c.validationStatus}
-                </span>
-              </td>
-
-              <td>
-                <span className={tagClass(c.invoiceStatus)}>
-                  {c.invoiceStatus}
-                </span>
-              </td>
-
-              <td>
-                <span className={tagClass(c.paymentStatus)}>
-                  {c.paymentStatus}
-                </span>
-              </td>
-
-              <td style={overdueStyle(c.overdueDate)}>
-                {c.overdueDate ? new Date(c.overdueDate).toLocaleDateString() : "-"}
-              </td>
-
+              <td><span className="tag dark">{c.status}</span></td>
+              <td><span className={tagClass(c.validationStatus)}>{c.validationStatus}</span></td>
+              <td><span className={tagClass(c.invoiceStatus)}>{c.invoiceStatus}</span></td>
+              <td><span className={tagClass(c.paymentStatus)}>{c.paymentStatus}</span></td>
+              <td style={overdueStyle(c.overdueDate)}>{c.overdueDate ? new Date(c.overdueDate).toLocaleDateString() : "-"}</td>
               <td>
                 <button className="btn" onClick={() => navigate(`/campaigns/${c._id}`)}>View</button>
                 <button className="btn" onClick={() => navigate(`/campaigns/${c._id}/edit`)}>Edit</button>

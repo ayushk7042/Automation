@@ -4,6 +4,9 @@ const Campaign = require("../models/Campaign");
 const User = require("../models/User");
 const sendCampaignEmail = require("./sendCampaignEmail");
 const moment = require("moment");
+const Notification = require("../models/Notification");
+
+
 
 const setupCronJobs = () => {
   console.log("⏳ Cron Jobs Loaded Successfully");

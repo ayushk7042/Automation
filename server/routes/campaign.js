@@ -141,38 +141,41 @@ router.post("/upload", authMiddleware, requireAdmin, upload.single("file"), asyn
 
     const summary = { created: 0, updated: 0, failed: 0, details: [] };
 
+
+ const monthMap = {
+      january: 0, february: 1, march: 2, april: 3, may: 4, june: 5,
+      july: 6, august: 7, september: 8, october: 9, november: 10, december: 11
+    };
+
+
+
     for (const row of raw) {
       try {
-        // Normalize column keys (trim)
-        // Example incoming columns (from your sample):
-        // "Campaigns","Advertiser","Direct / INDIRECT","AM","Status","WEB/ MOBILE",...
-        // We'll try multiple column name variants to be flexible
-        // const col = (k) => {
-        //   if (!k) return "";
-        //   // direct return by common names
-        //   const keys = Object.keys(row);
-        //   // find key case-insensitive match for k or parts of k
-        //   const found = keys.find((kk) => kk.trim().toLowerCase() === k.trim().toLowerCase());
-        //   if (found) return row[found];
-        //   // fallback: search partial match
-        //   const found2 = keys.find((kk) => kk.trim().toLowerCase().includes(k.trim().toLowerCase()));
-        //   return found2 ? row[found2] : "";
-        // };
+       
 
 
 // Clean + safe column finder
-const clean = (str) =>
-  str?.replace(/[\u200B-\u200D\uFEFF]/g, "").trim().toLowerCase();
+// const clean = (str) =>
+//   str?.replace(/[\u200B-\u200D\uFEFF]/g, "").trim().toLowerCase();
 
-const col = (key) => {
-  const keys = Object.keys(row);
-  const match = keys.find((k) => clean(k) === clean(key));
-  if (match) return row[match];
+// const col = (key) => {
+//   const keys = Object.keys(row);
+//   const match = keys.find((k) => clean(k) === clean(key));
+//   if (match) return row[match];
 
-  const match2 = keys.find((k) => clean(k).includes(clean(key)));
-  return match2 ? row[match2] : "";
-};
+//   const match2 = keys.find((k) => clean(k).includes(clean(key)));
+//   return match2 ? row[match2] : "";
+// };
 
+
+const clean = (str) => str?.replace(/[\u200B-\u200D\uFEFF]/g, "").trim().toLowerCase();
+        const col = (key) => {
+          const keys = Object.keys(row);
+          const match = keys.find((k) => clean(k) === clean(key));
+          if (match) return row[match];
+          const match2 = keys.find((k) => clean(k).includes(clean(key)));
+          return match2 ? row[match2] : "";
+        };
 
 
         const campaignName = (col("Campaigns") || col("Campaign") || "").toString().trim();
@@ -194,38 +197,89 @@ const col = (key) => {
         const invoiceAmountRaw = (col("Invoice Amount") || col("InvoiceAmount") || "").toString().trim();
         const invoiceNumberRaw = (col("Invoice Number") || col("InvoiceNumber") || "").toString().trim();
         const invoiceStatusRaw = (col("Invoice Status") || "").toString().trim();
-        const invoiceDateRaw = (col("Invoice Date") || "").toString().trim();
+        //const invoiceDateRaw = (col("Invoice Date") || "").toString().trim();
         const paymentStatusRaw = (col("Payment Status") || "").toString().trim();
         const commentsRaw = (col("Comments") || col("Notes") || "").toString().trim();
         const monthsRaw = (col("Months") || col("Month") || "").toString().trim();
 
-        if (!campaignName || !advertiserName) {
+        // if (!campaignName || !advertiserName) {
+        //   summary.failed++;
+        //   summary.details.push({ row: row, reason: "missing advertiser or campaign name" });
+        //   continue;
+        // }
+
+        // // Try find AM by exact email or name (case-insensitive)
+        // let amUser = null;
+        // if (amRaw) {
+        //   // if looks like email
+        //   if (/@/.test(amRaw)) {
+        //     amUser = await User.findOne({ email: amRaw.toLowerCase() });
+        //   }
+        //   if (!amUser) {
+        //     // try find by name (case-insensitive)
+        //     amUser = await User.findOne({ name: new RegExp(`^${amRaw}$`, "i") });
+        //   }
+        // }
+
+        // // Helper: safe number parse
+        // const parseNum = (v) => {
+        //   if (v === undefined || v === null || v === "") return 0;
+        //   const n = Number(String(v).replace(/[,₹\s]/g, ""));
+        //   return isNaN(n) ? 0 : n;
+        // };
+
+        // const invoiceDate = invoiceDateRaw ? new Date(invoiceDateRaw) : undefined;
+
+
+if (!campaignName || !advertiserName) {
           summary.failed++;
-          summary.details.push({ row: row, reason: "missing advertiser or campaign name" });
+          summary.details.push({ row, reason: "missing advertiser or campaign name" });
           continue;
         }
 
-        // Try find AM by exact email or name (case-insensitive)
+        // Find AM
         let amUser = null;
         if (amRaw) {
-          // if looks like email
-          if (/@/.test(amRaw)) {
-            amUser = await User.findOne({ email: amRaw.toLowerCase() });
-          }
-          if (!amUser) {
-            // try find by name (case-insensitive)
-            amUser = await User.findOne({ name: new RegExp(`^${amRaw}$`, "i") });
-          }
+          if (/@/.test(amRaw)) amUser = await User.findOne({ email: amRaw.toLowerCase() });
+          if (!amUser) amUser = await User.findOne({ name: new RegExp(`^${amRaw}$`, "i") });
         }
 
-        // Helper: safe number parse
         const parseNum = (v) => {
           if (v === undefined || v === null || v === "") return 0;
           const n = Number(String(v).replace(/[,₹\s]/g, ""));
           return isNaN(n) ? 0 : n;
         };
 
+        const invoiceDateRaw = col("Invoice Date") || "";
         const invoiceDate = invoiceDateRaw ? new Date(invoiceDateRaw) : undefined;
+
+        // Compute startDate from Months column
+        let startDate;
+        if (monthsRaw) {
+          const monthKey = monthsRaw.toLowerCase();
+          if (monthMap.hasOwnProperty(monthKey)) {
+            const year = new Date().getFullYear();
+            startDate = new Date(year, monthMap[monthKey], 1);
+          } else {
+            startDate = new Date();
+          }
+        }
+
+        // Compute endDate based on platform
+        let endDate;
+        const platform = platformRaw ? (platformRaw.toLowerCase().includes("web") ? "Web" : platformRaw.toLowerCase().includes("mob") ? "Mobile" : "Other") : undefined;
+        if (platform && startDate) {
+          if (platform === "Mobile") {
+            endDate = new Date(startDate);
+            endDate.setDate(endDate.getDate() + 15);
+          } else if (platform === "Web") {
+            endDate = new Date(startDate);
+            endDate.setDate(endDate.getDate() + 30);
+          }
+        }
+
+
+
 
         // Build payload
         const payload = {
@@ -235,6 +289,10 @@ const col = (key) => {
           directType: directTypeRaw ? (directTypeRaw.toLowerCase().startsWith("d") ? "Direct" : "Indirect") : undefined,
           status: statusRaw || undefined,
           platform: platformRaw ? (platformRaw.toLowerCase().includes("web") ? "Web" : platformRaw.toLowerCase().includes("mob") ? "Mobile" : "Other") : undefined,
+         
+         startDate,
+          endDate,
+         
           transactions: parseNum(transactionsRaw),
           expectedBilling: parseNum(expectedBillingRaw),
           expectedSpend: parseNum(expectedSpendRaw),
@@ -267,13 +325,20 @@ const col = (key) => {
           summary.updated++;
           summary.details.push({ row: row, action: "updated", id: existing._id });
         } else {
+          // const toCreate = new Campaign({
+          //   ...payload,
+          //   createdBy: req.user._id,
+          //   startDate: undefined,
+          //   endDate: undefined,
+          //   overdueDate: undefined,
+          // });
+
           const toCreate = new Campaign({
-            ...payload,
-            createdBy: req.user._id,
-            startDate: undefined,
-            endDate: undefined,
-            overdueDate: undefined,
-          });
+  ...payload,
+  createdBy: req.user._id,
+});
+
+
           await toCreate.save();
           summary.created++;
           summary.details.push({ row: row, action: "created", id: toCreate._id });
@@ -541,7 +606,13 @@ router.get("/", authMiddleware, async (req, res) => {
         const year = new Date().getFullYear();
         const start = new Date(year, m - 1, 1);
         const end = new Date(year, m, 1);
-        filter.createdAt = { $gte: start, $lt: end };
+        // filter.createdAt = { $gte: start, $lt: end };
+// Filter campaigns that overlap the selected month
+filter.$or = [
+  { startDate: { $lte: end }, endDate: { $gte: start } }
+];
+
+
       }
     }
 
