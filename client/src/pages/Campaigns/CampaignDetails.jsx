@@ -673,7 +673,7 @@ const CampaignDetails = () => {
 
                     <td>
                       <a
-                        href={`http://localhost:5000/${doc.path}`}
+                        href={`${import.meta.env.VITE_BASE_URL}/${doc.path}`}
                         target="_blank"
                         className="link"
                       >

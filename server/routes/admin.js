@@ -193,7 +193,7 @@ router.post("/create-user", async (req, res) => {
     });
 
     const sendInviteEmail = require("../utils/sendInviteEmail");
-    await sendInviteEmail(email, name, tempPassword);
+    await sendInviteEmail(email, tempPassword);
 
     res.status(201).json({
       message: "User created & email sent",
