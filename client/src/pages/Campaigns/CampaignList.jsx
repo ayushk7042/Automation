@@ -524,6 +524,9 @@ if (filters.month) {
             <th>Validation</th>
             <th>Invoice</th>
             <th>Payment</th>
+
+<th>Start Date</th>
+
             <th>Overdue</th>
             <th>Actions</th>
           </tr>
@@ -541,8 +544,19 @@ if (filters.month) {
               <td><span className={tagClass(c.validationStatus)}>{c.validationStatus}</span></td>
               <td><span className={tagClass(c.invoiceStatus)}>{c.invoiceStatus}</span></td>
               <td><span className={tagClass(c.paymentStatus)}>{c.paymentStatus}</span></td>
-              <td style={overdueStyle(c.overdueDate)}>{c.overdueDate ? new Date(c.overdueDate).toLocaleDateString() : "-"}</td>
-              <td>
+              {/* <td style={overdueStyle(c.overdueDate)}>{c.overdueDate ? new Date(c.overdueDate).toLocaleDateString() : "-"}</td>
+              <td> */}
+
+<td>
+  {c.startDate ? new Date(c.startDate).toLocaleDateString() : "-"}
+</td>
+
+<td style={overdueStyle(c.overdueDate)}>
+  {c.overdueDate ? new Date(c.overdueDate).toLocaleDateString() : "-"}
+</td>
+<td>
+
+
                 <button className="btn" onClick={() => navigate(`/campaigns/${c._id}`)}>View</button>
                 <button className="btn" onClick={() => navigate(`/campaigns/${c._id}/edit`)}>Edit</button>
                 <button className="btn danger" onClick={() => handleDelete(c._id)}>Delete</button>
