@@ -417,10 +417,21 @@ if (filters.month) {
       const res = await importCampaigns(formData);
       alert(`Upload Completed. Created: ${res.data.summary?.created || 0} | Updated: ${res.data.summary?.updated || 0}`);
       load();
-    } catch (error) {
-      console.error(error);
-      alert("Import failed");
-    }
+    // } catch (error) {
+    //   console.error(error);
+    //   alert("Import failed");
+    // }
+
+    }catch (error) {
+  console.error("UPLOAD ERROR:", error.response?.data || error.message);
+
+  alert(
+    error?.response?.data?.message ||
+    "Upload failed - check error in console"
+  );
+}
+
+
   };
 
   const handleExport = async () => {

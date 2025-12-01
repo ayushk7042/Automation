@@ -348,7 +348,7 @@ if (!campaignName || !advertiserName) {
             try {
               await Notification.create({
                 user: amUser._id,
-                title: "Historical campaign added",
+                title: " campaign added",
                 body: `A campaign "${toCreate.campaignName}" (Advertiser: ${toCreate.advertiserName}) was imported and assigned to you.`,
                 type: "import",
                 meta: { campaignId: toCreate._id },
